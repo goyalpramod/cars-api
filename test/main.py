@@ -27,9 +27,10 @@ def get_all_cars():
     return cars
 
 
-@app.get("/car/{car_id}")
-def get_a_car(item_id: int):
-    pass
+@app.get("/car/{car_id}", response_model=Car, status_code=200)
+def get_a_car(car_id: int):
+    car = db.query(models.Car).filter(models.Car.id == car_id).first()
+    return car
 
 
 @app.post("/cars", response_model=Car, status_code=201)
@@ -53,11 +54,20 @@ def create_a_car(car: Car):
     return new_car
 
 
-@app.put("/item/{item_id}")
-def update_a_car(item_id: int):
-    pass
+@app.put("/car/{car_id}", response_model=Car, status_code=200)
+def update_a_car(car_id: int,car:Car):
+    car_to_update = db.query(models.Car).filter(models.Car.id == car_id).first()
+    car_to_update.name = car.name
+    car_to_update.make = car.make
+    car_to_update.horsepower = car.horsepower
+    car_to_update.color = car.color
+
+    db.commit()
+
+    return car_to_update
 
 
-@app.delete("/item/{item_id}")
-def delete_a_car(item_id: int):
+
+@app.delete("/car/{car_id}")
+def delete_a_car(car_id: int):
     pass
