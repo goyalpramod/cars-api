@@ -209,6 +209,11 @@ target/
 #   install all needed dependencies.
 #Pipfile.lock
 
+.idea
+.venv
+venv/
+idea/
+
 # celery beat schedule file
 celerybeat-schedule
 
@@ -276,5 +281,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm,windows,visualstudiocode
-.idea
-.venv
