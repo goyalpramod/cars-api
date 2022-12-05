@@ -1,16 +1,10 @@
-# fastapi-example [![CircleCI](https://circleci.com/gh/marciovrl/fastapi-example.svg?style=svg)](https://circleci.com/gh/marciovrl/fastapi-example)
+# cars_api 
 
 A simple example of using Fast API in Python.
 
 ## Preconditions:
 
 - Python 3
-
-## Clone the project
-
-```
-git clone https://github.com/marciovrl/fastapi-example.git
-```
 
 ## Run local
 

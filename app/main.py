@@ -1,44 +1,80 @@
 from fastapi import FastAPI, HTTPException
-from starlette.responses import Response
-
-from app.db.models import UserAnswer
-from app.api import api
+from pydantic import BaseModel
+from database import session_local
+from typing import List
+import models
 
 app = FastAPI()
 
 
-@app.get("/")
-def root():
-    return {"message": "Fast API in Python"}
+class Car(BaseModel):
+    id: int
+    name: str
+    make: str
+    horsepower: int
+    color: str
+
+    class Config:
+        orm_mode = True
 
 
-@app.get("/user")
-def read_user():
-    return api.read_user()
+db = session_local()
 
 
-@app.get("/question/{position}", status_code=200)
-def read_questions(position: int, response: Response):
-    question = api.read_questions(position)
-
-    if not question:
-        raise HTTPException(status_code=400, detail="Error")
-
-    return question
+@app.get("/cars", response_model=List[Car], status_code=200)
+def get_all_cars():
+    cars = db.query(models.Car).all()
+    return cars
 
 
-@app.get("/alternatives/{question_id}")
-def read_alternatives(question_id: int):
-    return api.read_alternatives(question_id)
+@app.get("/car/{car_id}", response_model=Car, status_code=200)
+def get_a_car(car_id: int):
+    car = db.query(models.Car).filter(models.Car.id == car_id).first()
+    return car
 
 
-@app.post("/answer", status_code=201)
-def create_answer(payload: UserAnswer):
-    payload = payload.dict()
+@app.post("/cars", response_model=Car, status_code=201)
+def create_a_car(car: Car):
+    db_item = db.query(models.Car).filter(models.Car.name == car.name).first()
 
-    return api.create_answer(payload)
+    if db_item is not None:
+        raise HTTPException(status_code=400, detail="Car already exists")
+
+    new_car = models.Car(
+        id=car.id,
+        name=car.name,
+        make=car.make,
+        horsepower=car.horsepower,
+        color=car.color,
+    )
+
+    db.add(new_car)
+    db.commit()
+
+    return new_car
 
 
-@app.get("/result/{user_id}")
-def read_result(user_id: int):
-    return api.read_result(user_id)
+@app.put("/car/{car_id}", response_model=Car, status_code=200)
+def update_a_car(car_id: int, car: Car):
+    car_to_update = db.query(models.Car).filter(models.Car.id == car_id).first()
+    car_to_update.name = car.name
+    car_to_update.make = car.make
+    car_to_update.horsepower = car.horsepower
+    car_to_update.color = car.color
+
+    db.commit()
+
+    return car_to_update
+
+
+@app.delete("/car/{car_id}",status_code=202)
+def delete_a_car(car_id: int):
+    car_to_delete = db.query(models.Car).filter(models.Car.id == car_id).first()
+
+    if car_to_delete is None:
+        raise HTTPException(status_code=404, detail="Resources not found")
+
+    db.delete(car_to_delete)
+    db.commit()
+
+    return car_to_delete
