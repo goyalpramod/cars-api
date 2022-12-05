@@ -55,56 +55,34 @@ def test_create_a_car():
     }
 
 
-# def test_update_note(test_app, monkeypatch):
-#     test_update_data = {"title": "someone", "description": "someone else", "id": 1}
-#
-#     async def mock_get(id):
-#         return True
-#
-#     monkeypatch.setattr(crud, "get", mock_get)
-#
-#     async def mock_put(id, payload):
-#         return 1
-#
-#     monkeypatch.setattr(crud, "put", mock_put)
-#
-#     response = test_app.put("/notes/1/", content=json.dumps(test_update_data))
-#     assert response.status_code == 200
-#     assert response.json() == test_update_data
-
-
 def test_update_a_car():
-    pass
+    test_update_data = {
+        "id": 1,
+        "name": "Foo Bar",
+        "make": "The Foo Barters",
+        "horsepower": 3000,
+        "color": "black",
+    }
+
+    response = client.put("/car/1", json=test_update_data)
+    assert response.status_code == 200
+    assert response.json() == test_update_data
 
 
 # def test_remove_note(test_app, monkeypatch):
 #     test_data = {"title": "something", "description": "something else", "id": 1}
-#
-#     async def mock_get(id):
-#         return test_data
-#
-#     monkeypatch.setattr(crud, "get", mock_get)
-#
-#     async def mock_delete(id):
-#         return id
-#
-#     monkeypatch.setattr(crud, "delete", mock_delete)
-#
 #     response = test_app.delete("/notes/1/")
 #     assert response.status_code == 200
 #     assert response.json() == test_data
-#
-#
-# def test_remove_note_incorrect_id(test_app, monkeypatch):
-#     async def mock_get(id):
-#         return None
-#
-#     monkeypatch.setattr(crud, "get", mock_get)
-#
-#     response = test_app.delete("/notes/999/")
-#     assert response.status_code == 404
-#     assert response.json()["detail"] == "Note not found"
 
+def test_delete_a_car_with_invalid_id():
+    response = client.delete("/car/1")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Resources not found"
 
 def test_delete_a_car():
-    pass
+    response = client.delete("/car/1")
+
+    if response.status_code != 404:
+        assert response.status_code == 202

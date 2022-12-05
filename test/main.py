@@ -67,7 +67,7 @@ def update_a_car(car_id: int, car: Car):
     return car_to_update
 
 
-@app.delete("/car/{car_id}")
+@app.delete("/car/{car_id}",status_code=202)
 def delete_a_car(car_id: int):
     car_to_delete = db.query(models.Car).filter(models.Car.id == car_id).first()
 
