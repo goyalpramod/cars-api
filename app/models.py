@@ -1,5 +1,5 @@
-from database import base
-from sqlalchemy import String, Boolean, Integer, Column
+from app.database import base
+from sqlalchemy import String, Integer, Column
 
 
 class Car(base):

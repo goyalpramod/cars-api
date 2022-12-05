@@ -1,5 +1,4 @@
-from database import base,engine
-from models import Car
+from app.database import base,engine
 
 print("Creating database")
 

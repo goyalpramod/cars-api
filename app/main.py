@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from database import session_local
+from app.database import session_local
 from typing import List
-import models
+from app import models
 
 app = FastAPI()
 
