@@ -23,4 +23,4 @@ jobs:
           python -m pip install poetry
           poetry install
       - name: Test with tox
-        run: tox
+        run: poetry run tox
