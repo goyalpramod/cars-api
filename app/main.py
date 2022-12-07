@@ -1,46 +1,34 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from app.database import session_local
 from typing import List
-from app import models
+from app.models import db_models
+from app.models.models import Car
 
 app = FastAPI()
-
-
-class Car(BaseModel):
-    id: int
-    name: str
-    make: str
-    horsepower: int
-    color: str
-
-    class Config:
-        orm_mode = True
-
 
 db = session_local()
 
 
 @app.get("/cars", response_model=List[Car], status_code=200)
-def get_all_cars():
-    cars = db.query(models.Car).all()
+def get_all_cars() -> List[Car]:
+    cars = db.query(db_models.Car).all()
     return cars
 
 
 @app.get("/car/{car_id}", response_model=Car, status_code=200)
-def get_a_car(car_id: int):
-    car = db.query(models.Car).filter(models.Car.id == car_id).first()
+def get_a_car(car_id: int) -> Car:
+    car = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
     return car
 
 
 @app.post("/cars", response_model=Car, status_code=201)
-def create_a_car(car: Car):
-    db_item = db.query(models.Car).filter(models.Car.name == car.name).first()
+def create_a_car(car: Car) -> Car:
+    db_item = db.query(db_models.Car).filter(db_models.Car.name == car.name).first()
 
     if db_item is not None:
         raise HTTPException(status_code=400, detail="Car already exists")
 
-    new_car = models.Car(
+    new_car = db_models.Car(
         id=car.id,
         name=car.name,
         make=car.make,
@@ -55,8 +43,8 @@ def create_a_car(car: Car):
 
 
 @app.put("/car/{car_id}", response_model=Car, status_code=200)
-def update_a_car(car_id: int, car: Car):
-    car_to_update = db.query(models.Car).filter(models.Car.id == car_id).first()
+def update_a_car(car_id: int, car: Car) -> Car:
+    car_to_update = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
     car_to_update.name = car.name
     car_to_update.make = car.make
     car_to_update.horsepower = car.horsepower
@@ -67,9 +55,9 @@ def update_a_car(car_id: int, car: Car):
     return car_to_update
 
 
-@app.delete("/car/{car_id}",status_code=202)
-def delete_a_car(car_id: int):
-    car_to_delete = db.query(models.Car).filter(models.Car.id == car_id).first()
+@app.delete("/car/{car_id}", status_code=202)
+def delete_a_car(car_id: int) -> dict:
+    car_to_delete = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
 
     if car_to_delete is None:
         raise HTTPException(status_code=404, detail="Resources not found")
@@ -77,4 +65,4 @@ def delete_a_car(car_id: int):
     db.delete(car_to_delete)
     db.commit()
 
-    return car_to_delete
+    return {"message": "data successfully deleted"}
