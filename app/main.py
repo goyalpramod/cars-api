@@ -10,19 +10,19 @@ db = session_local()
 
 
 @app.get("/cars", response_model=List[Car], status_code=200)
-def get_all_cars() -> List[Car]:
+async def get_all_cars() -> List[Car]:
     cars = db.query(db_models.Car).all()
     return cars
 
 
 @app.get("/car/{car_id}", response_model=Car, status_code=200)
-def get_a_car(car_id: int) -> Car:
+async def get_a_car(car_id: int) -> Car:
     car = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
     return car
 
 
 @app.post("/cars", response_model=Car, status_code=201)
-def create_a_car(car: Car) -> Car:
+async def create_a_car(car: Car) -> Car:
     db_item = db.query(db_models.Car).filter(db_models.Car.name == car.name).first()
 
     if db_item is not None:
@@ -43,7 +43,7 @@ def create_a_car(car: Car) -> Car:
 
 
 @app.put("/car/{car_id}", response_model=Car, status_code=200)
-def update_a_car(car_id: int, car: Car) -> Car:
+async def update_a_car(car_id: int, car: Car) -> Car:
     car_to_update = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
     car_to_update.name = car.name
     car_to_update.make = car.make
@@ -56,7 +56,7 @@ def update_a_car(car_id: int, car: Car) -> Car:
 
 
 @app.delete("/car/{car_id}", status_code=202)
-def delete_a_car(car_id: int) -> dict:
+async def delete_a_car(car_id: int) -> dict:
     car_to_delete = db.query(db_models.Car).filter(db_models.Car.id == car_id).first()
 
     if car_to_delete is None:
