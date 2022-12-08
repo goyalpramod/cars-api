@@ -23,6 +23,8 @@ httpx = "^0.23.1"
 tox-gh-actions = "^2.10.0"
 tox = "^3.23.0"
 
+[tool.poetry.scripts]
+cars_api = "cars-api.git.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
