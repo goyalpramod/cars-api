@@ -43,7 +43,7 @@ jobs:
         run: |
           gcloud workflows deploy myWorkflowFromGitHub \
           --location europe-west3 \
-          --source dhl_workflows/get_wiki_article_workflow.yaml \
+          --source app/test_workflow/get_wiki_article_workflow.yaml \
           --project ${{ secrets.GCP_PROJECT_ID }} \
           --labels "commit-sha=${{ github.sha }}" \
           --service-account pramod-goyal@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
