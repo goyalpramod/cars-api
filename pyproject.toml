@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "cars-api"
+version = "0.1.0"
+description = ""
+authors = ["goyalpramod <goyalpramod1729@gmail.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+starlette = "^0.22.0"
+psycopg2-binary = "^2.9.5"
+pydantic = "^1.10.2"
+requests = "^2.28.1"
+sqlalchemy = "^1.4.44"
+uvicorn = "^0.20.0"
+fastapi = "^0.88.0"
+pytest = "^7.2.0"
+httpx = "^0.23.1"
+
+
+[tool.poetry.group.dev.dependencies]
+tox-gh-actions = "^2.10.0"
+tox = "^3.23.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
