@@ -3,6 +3,7 @@ from app.database import session_local
 from typing import List
 from app.models import db_models
 from app.models.models import Car
+import uvicorn
 
 app = FastAPI()
 
@@ -66,3 +67,6 @@ async def delete_a_car(car_id: int) -> dict:
     db.commit()
 
     return {"message": "data successfully deleted"}
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", port=8080, reload=True, debug=True, workers=3)
