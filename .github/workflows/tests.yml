@@ -88,7 +88,9 @@ jobs:
 
       - uses: act10ns/slack@v1
         with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
           status: ${{ job.status }}
+          config: .github/config/slack.yml
           steps: ${{ toJson(steps) }}
           channel: '#test-alerts'
         if: always()
