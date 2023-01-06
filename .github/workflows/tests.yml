@@ -1,12 +1,18 @@
-name: Tests
+name: Test and deployment
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ${{matrix.platform}}
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     strategy:
       matrix:
         platform: [windows-latest]
@@ -27,23 +33,64 @@ jobs:
         run: poetry run tox
 
 
+#  deploy:
+#    name: Deploy Cloud Workflow
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up Cloud SDK
+#        uses: google-github-actions/auth@v0
+#        with:
+#          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+#          service_account_key: ${{ secrets.GCP_SA_KEY }}
+#          project_id: ${{ secrets.GCP_PROJECT_ID }}
+#          export_default_credentials: true
+#      - name: Use gcloud CLI
+#        run: |
+#          gcloud workflows deploy myWorkflowFromGitHub \
+#          --location europe-west3 \
+#          --source app/test_workflow/get_wiki_article_workflow.yaml \
+#          --project ${{ secrets.GCP_PROJECT_ID }} \
+#          --labels "commit-sha=${{ github.sha }}" \
+#          --service-account pramod-goyal@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+#
   deploy:
-    name: Deploy Cloud Workflow
+    name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Cloud SDK
-        uses: google-github-actions/auth@v0
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@v0
         with:
-          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          service_account_email: pramod-goyal@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+          service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
           export_default_credentials: true
-      - name: Use gcloud CLI
+
+      # Configure Docker with Credentials
+      - name: Configure Docker
         run: |
-          gcloud workflows deploy myWorkflowFromGitHub \
-          --location europe-west3 \
-          --source app/test_workflow/get_wiki_article_workflow.yaml \
-          --project ${{ secrets.GCP_PROJECT_ID }} \
-          --labels "commit-sha=${{ github.sha }}" \
-          --service-account pramod-goyal@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+          gcloud auth configure-docker
+
+      # Build the Docker image
+      - name: Build & Publish
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/cars-api
+          gcloud config set run/region europe-west3
+
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |
+          gcloud run deploy cars-api --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/cars-api \
+          --platform managed
+
+      - uses: act10ns/slack@v1
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          config: .github/config/slack.yml
+          steps: ${{ toJson(steps) }}
+          channel: '#test-alerts'
+        if: always()
