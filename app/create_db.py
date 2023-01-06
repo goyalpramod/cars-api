@@ -1,4 +1,4 @@
-from app.database import base,engine
+from app.database import base, engine
 
 print("Creating database")
 

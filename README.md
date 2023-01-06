@@ -1,4 +1,4 @@
-# cars_api 
+# cars_api
 
 A simple example of using Fast API in Python.
 

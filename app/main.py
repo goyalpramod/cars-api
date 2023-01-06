@@ -68,5 +68,6 @@ async def delete_a_car(car_id: int) -> dict:
 
     return {"message": "data successfully deleted"}
 
+
 if __name__ == "__main__":
     uvicorn.run("app.main:app", port=8080, reload=True, debug=True, workers=3)

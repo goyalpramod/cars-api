@@ -2,7 +2,7 @@ username: GitHub-CI
 icon_url: https://octodex.github.com/images/mona-the-rivetertocat.png
 
 pretext: Triggered via {{eventName}} by {{actor}} {{or action "action"}} {{ref}} `{{diffRef}}`
-title: GitHub Actions
+title: GitHub Actions {{repositoryUrl}}|{{repositoryName}} {{workflow}} #{{runNumber}}
 title_link: https://support.github.com
 
 text: |
@@ -42,8 +42,8 @@ fields:
     value: "{{jobStatus}}"
     short: true
 
-footer: >-
-  <{{repositoryUrl}}|{{repositoryName}}> {{workflow}} #{{runNumber}}
+#footer: >-
+#  <{{repositoryUrl}}|{{repositoryName}}> {{workflow}} #{{runNumber}}
 
 colors:
   success: '#5DADE2'
