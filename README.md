@@ -51,5 +51,12 @@ http://127.0.0.1:8000/docs
 ```
 docker-compose exec db psql --username=fastapi --dbname=fastapi_dev
 ```
-=======
-# stryze_internship
+
+## Best Practices 
+
+* [PEP8](https://peps.python.org/pep-0008/)
+* [Black](https://pypi.org/project/black/)
+* [Zen of Python](https://peps.python.org/pep-0020/)
+* [Solid Principles](https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/)
+* [Commit Etiquettes](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
+* [Bash alias](https://www.geeksforgeeks.org/bash-scripting-working-of-alias/)
