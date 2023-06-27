@@ -60,3 +60,4 @@ docker-compose exec db psql --username=fastapi --dbname=fastapi_dev
 * [Solid Principles](https://www.freecodecamp.org/news/solid-principles-explained-in-plain-english/)
 * [Commit Etiquettes](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
 * [Bash alias](https://www.geeksforgeeks.org/bash-scripting-working-of-alias/)
+* [Structuring repo](https://docs.python-guide.org/writing/structure/)
