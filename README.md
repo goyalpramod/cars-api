@@ -1,1 +1,1 @@
-# stryze_internship
+# sample_FastAPI_code
